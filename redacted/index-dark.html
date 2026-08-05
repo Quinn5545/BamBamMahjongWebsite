@@ -1,0 +1,811 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dragon Tile Mahjong</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Cinzel:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --jade: #2d6a4f;
+        --jade-lt: #52b788;
+        --gold: #c9a84c;
+        --gold-lt: #f0d080;
+        --ivory: #fdf6e3;
+        --ink: #1a1209;
+        --red: #c0392b;
+        --tile: #f5ede0;
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        background: var(--ink);
+        color: var(--ivory);
+        font-family: "Cormorant Garamond", Georgia, serif;
+        overflow-x: hidden;
+      }
+
+      /* ── HERO ─────────────────────────────────── */
+      header {
+        position: relative;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        overflow: hidden;
+        background: radial-gradient(
+          ellipse at 50% 60%,
+          #2a1a08 0%,
+          #0d0a05 70%
+        );
+      }
+
+      /* Decorative tile grid background */
+      header::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image:
+          repeating-linear-gradient(
+            0deg,
+            rgba(201, 168, 76, 0.07) 0px,
+            rgba(201, 168, 76, 0.07) 1px,
+            transparent 1px,
+            transparent 60px
+          ),
+          repeating-linear-gradient(
+            90deg,
+            rgba(201, 168, 76, 0.07) 0px,
+            rgba(201, 168, 76, 0.07) 1px,
+            transparent 1px,
+            transparent 60px
+          );
+        pointer-events: none;
+      }
+
+      .hero-tiles {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        overflow: hidden;
+      }
+
+      .htile {
+        position: absolute;
+        width: 52px;
+        height: 70px;
+        background: var(--tile);
+        border-radius: 6px;
+        border: 2px solid var(--gold);
+        box-shadow:
+          0 4px 18px rgba(0, 0, 0, 0.5),
+          inset 0 1px 0 rgba(255, 255, 255, 0.4);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.6rem;
+        opacity: 0;
+        animation: floatTile 18s infinite ease-in-out;
+      }
+
+      @keyframes floatTile {
+        0% {
+          opacity: 0;
+          transform: translateY(20px) rotate(-4deg);
+        }
+        10% {
+          opacity: 0.55;
+        }
+        50% {
+          opacity: 0.4;
+          transform: translateY(-10px) rotate(3deg);
+        }
+        90% {
+          opacity: 0.35;
+        }
+        100% {
+          opacity: 0;
+          transform: translateY(-40px) rotate(-2deg);
+        }
+      }
+
+      .htile:nth-child(1) {
+        top: 8%;
+        left: 6%;
+        animation-delay: 0s;
+        animation-duration: 16s;
+      }
+      .htile:nth-child(2) {
+        top: 20%;
+        left: 82%;
+        animation-delay: 2.5s;
+        animation-duration: 19s;
+      }
+      .htile:nth-child(3) {
+        top: 65%;
+        left: 4%;
+        animation-delay: 5s;
+        animation-duration: 14s;
+      }
+      .htile:nth-child(4) {
+        top: 75%;
+        left: 88%;
+        animation-delay: 1s;
+        animation-duration: 20s;
+      }
+      .htile:nth-child(5) {
+        top: 42%;
+        left: 92%;
+        animation-delay: 3.5s;
+        animation-duration: 17s;
+      }
+      .htile:nth-child(6) {
+        top: 85%;
+        left: 50%;
+        animation-delay: 7s;
+        animation-duration: 15s;
+      }
+      .htile:nth-child(7) {
+        top: 30%;
+        left: 12%;
+        animation-delay: 4s;
+        animation-duration: 22s;
+      }
+      .htile:nth-child(8) {
+        top: 55%;
+        left: 70%;
+        animation-delay: 6s;
+        animation-duration: 18s;
+      }
+
+      .hero-content {
+        position: relative;
+        z-index: 2;
+        animation: fadeUp 0.9s ease both;
+      }
+
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(28px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .hero-kana {
+        font-family: "Noto Serif SC", serif;
+        font-size: clamp(3rem, 10vw, 7rem);
+        color: var(--gold);
+        letter-spacing: 0.05em;
+        line-height: 1;
+        text-shadow: 0 0 40px rgba(201, 168, 76, 0.4);
+        animation: fadeUp 0.9s 0.1s ease both;
+      }
+
+      .hero-title {
+        font-family: "Cinzel", serif;
+        font-size: clamp(1.1rem, 3.5vw, 2.2rem);
+        letter-spacing: 0.35em;
+        text-transform: uppercase;
+        color: var(--ivory);
+        margin-top: 0.6rem;
+        animation: fadeUp 0.9s 0.25s ease both;
+      }
+
+      .hero-sub {
+        margin-top: 1.2rem;
+        font-size: clamp(0.95rem, 1.8vw, 1.25rem);
+        font-style: italic;
+        color: rgba(253, 246, 227, 0.6);
+        animation: fadeUp 0.9s 0.4s ease both;
+      }
+
+      .divider-gold {
+        width: 120px;
+        height: 2px;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          var(--gold),
+          transparent
+        );
+        margin: 1.8rem auto;
+        animation: fadeUp 0.9s 0.5s ease both;
+      }
+
+      .btn-primary {
+        display: inline-block;
+        padding: 0.85rem 2.6rem;
+        background: transparent;
+        border: 1.5px solid var(--gold);
+        color: var(--gold);
+        font-family: "Cinzel", serif;
+        font-size: 0.85rem;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        text-decoration: none;
+        cursor: pointer;
+        transition:
+          background 0.25s,
+          color 0.25s,
+          box-shadow 0.25s;
+        animation: fadeUp 0.9s 0.6s ease both;
+      }
+      .btn-primary:hover {
+        background: var(--gold);
+        color: var(--ink);
+        box-shadow: 0 0 20px rgba(201, 168, 76, 0.45);
+      }
+
+      /* ── NAV ──────────────────────────────────── */
+      nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 100;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.2rem 4vw;
+        background: rgba(13, 10, 5, 0.8);
+        backdrop-filter: blur(10px);
+        border-bottom: 1px solid rgba(201, 168, 76, 0.15);
+      }
+
+      .nav-logo {
+        font-family: "Noto Serif SC", serif;
+        font-size: 1.4rem;
+        color: var(--gold);
+        text-decoration: none;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 2.2rem;
+        list-style: none;
+      }
+      .nav-links a {
+        font-family: "Cinzel", serif;
+        font-size: 0.78rem;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: rgba(253, 246, 227, 0.7);
+        text-decoration: none;
+        transition: color 0.2s;
+      }
+      .nav-links a:hover {
+        color: var(--gold);
+      }
+
+      /* ── SECTIONS ─────────────────────────────── */
+      section {
+        padding: 6rem 6vw;
+      }
+
+      .section-label {
+        font-family: "Noto Serif SC", serif;
+        font-size: 2.2rem;
+        color: var(--gold);
+        margin-bottom: 0.3rem;
+      }
+      .section-title {
+        font-family: "Cinzel", serif;
+        font-size: clamp(1.4rem, 3vw, 2rem);
+        letter-spacing: 0.12em;
+        margin-bottom: 1rem;
+      }
+      .section-body {
+        font-size: 1.1rem;
+        line-height: 1.85;
+        color: rgba(253, 246, 227, 0.75);
+        max-width: 640px;
+      }
+
+      /* ── ABOUT ─────────────────────────────────── */
+      #about {
+        background: linear-gradient(135deg, #100c05 0%, #1a1209 100%);
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 5vw;
+        align-items: center;
+      }
+
+      .about-tile-stack {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+        justify-items: center;
+      }
+
+      .demo-tile {
+        width: 52px;
+        height: 70px;
+        background: var(--tile);
+        border-radius: 6px;
+        border: 2px solid var(--gold);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        box-shadow:
+          4px 4px 0 rgba(0, 0, 0, 0.6),
+          inset 0 1px 0 rgba(255, 255, 255, 0.5);
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
+      }
+      .demo-tile:hover {
+        transform: translateY(-4px);
+        box-shadow: 6px 8px 0 rgba(0, 0, 0, 0.6);
+      }
+      .demo-tile.red-tile {
+        color: var(--red);
+      }
+
+      /* ── SERVICES ─────────────────────────────── */
+      #services {
+        background: #0d0a05;
+        text-align: center;
+      }
+      #services .section-label,
+      #services .section-title {
+        text-align: center;
+      }
+      #services .section-title {
+        margin-bottom: 3rem;
+      }
+
+      .services-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1.8rem;
+        max-width: 960px;
+        margin: 0 auto;
+      }
+
+      .service-card {
+        background: #161008;
+        border: 1px solid rgba(201, 168, 76, 0.2);
+        border-radius: 4px;
+        padding: 2.2rem 1.6rem;
+        transition:
+          border-color 0.25s,
+          transform 0.25s;
+      }
+      .service-card:hover {
+        border-color: var(--gold);
+        transform: translateY(-5px);
+      }
+      .service-icon {
+        font-size: 2.2rem;
+        margin-bottom: 1rem;
+      }
+      .service-card h3 {
+        font-family: "Cinzel", serif;
+        font-size: 0.95rem;
+        letter-spacing: 0.12em;
+        margin-bottom: 0.7rem;
+        color: var(--gold-lt);
+      }
+      .service-card p {
+        font-size: 0.95rem;
+        line-height: 1.7;
+        color: rgba(253, 246, 227, 0.6);
+      }
+
+      /* ── PRICING ──────────────────────────────── */
+      #pricing {
+        background: linear-gradient(135deg, #100c05 0%, #1a1209 100%);
+        text-align: center;
+      }
+      #pricing .section-label,
+      #pricing .section-title {
+        text-align: center;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      #pricing .section-title {
+        margin-bottom: 3rem;
+      }
+
+      .pricing-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 1.8rem;
+        max-width: 820px;
+        margin: 0 auto;
+      }
+
+      .price-card {
+        border: 1px solid rgba(201, 168, 76, 0.2);
+        border-radius: 4px;
+        padding: 2.5rem 2rem;
+        background: #0d0a05;
+        position: relative;
+        transition: border-color 0.25s;
+      }
+      .price-card.featured {
+        border-color: var(--gold);
+        background: #1a1209;
+      }
+      .price-card.featured::before {
+        content: "Most Popular";
+        position: absolute;
+        top: -12px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--gold);
+        color: var(--ink);
+        font-family: "Cinzel", serif;
+        font-size: 0.65rem;
+        letter-spacing: 0.15em;
+        padding: 0.25rem 0.9rem;
+        border-radius: 20px;
+      }
+      .price-card h3 {
+        font-family: "Cinzel", serif;
+        font-size: 1rem;
+        letter-spacing: 0.15em;
+        margin-bottom: 1rem;
+        color: var(--ivory);
+      }
+      .price-amount {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 3rem;
+        color: var(--gold);
+        line-height: 1;
+      }
+      .price-amount span {
+        font-size: 1.2rem;
+        vertical-align: top;
+        margin-top: 0.5rem;
+        display: inline-block;
+      }
+      .price-per {
+        font-size: 0.85rem;
+        color: rgba(253, 246, 227, 0.45);
+        margin-bottom: 1.5rem;
+      }
+      .price-features {
+        list-style: none;
+        margin-bottom: 1.8rem;
+      }
+      .price-features li {
+        padding: 0.45rem 0;
+        font-size: 0.95rem;
+        color: rgba(253, 246, 227, 0.7);
+        border-bottom: 1px solid rgba(201, 168, 76, 0.08);
+      }
+      .price-features li::before {
+        content: "✦ ";
+        color: var(--jade-lt);
+        font-size: 0.7rem;
+      }
+
+      /* ── CONTACT ──────────────────────────────── */
+      #contact {
+        background: #0d0a05;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 5vw;
+        align-items: start;
+      }
+
+      .contact-form {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+      .contact-form input,
+      .contact-form textarea {
+        background: #161008;
+        border: 1px solid rgba(201, 168, 76, 0.25);
+        border-radius: 3px;
+        padding: 0.9rem 1.1rem;
+        color: var(--ivory);
+        font-family: "Cormorant Garamond", serif;
+        font-size: 1rem;
+        outline: none;
+        transition: border-color 0.2s;
+      }
+      .contact-form input::placeholder,
+      .contact-form textarea::placeholder {
+        color: rgba(253, 246, 227, 0.35);
+      }
+      .contact-form input:focus,
+      .contact-form textarea:focus {
+        border-color: var(--gold);
+      }
+      .contact-form textarea {
+        min-height: 130px;
+        resize: vertical;
+      }
+
+      .contact-info {
+        margin-top: 2rem;
+      }
+      .contact-info p {
+        font-size: 1rem;
+        color: rgba(253, 246, 227, 0.65);
+        margin-bottom: 0.6rem;
+        line-height: 1.7;
+      }
+      .contact-info strong {
+        color: var(--gold-lt);
+      }
+
+      /* ── FOOTER ───────────────────────────────── */
+      footer {
+        background: #080603;
+        border-top: 1px solid rgba(201, 168, 76, 0.12);
+        text-align: center;
+        padding: 2.5rem 4vw;
+      }
+      footer p {
+        font-size: 0.82rem;
+        color: rgba(253, 246, 227, 0.35);
+        letter-spacing: 0.08em;
+      }
+      footer .footer-logo {
+        font-family: "Noto Serif SC", serif;
+        font-size: 1.6rem;
+        color: var(--gold);
+        margin-bottom: 0.6rem;
+      }
+
+      /* ── RESPONSIVE ───────────────────────────── */
+      @media (max-width: 700px) {
+        #about,
+        #contact {
+          grid-template-columns: 1fr;
+        }
+        .about-tile-stack {
+          order: -1;
+        }
+        nav {
+          padding: 1rem 5vw;
+        }
+        .nav-links {
+          gap: 1.2rem;
+        }
+        .nav-links a {
+          font-size: 0.7rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- NAV -->
+    <nav>
+      <a href="#" class="nav-logo">龍牌</a>
+      <ul class="nav-links">
+        <li><a href="#about">About</a></li>
+        <li><a href="#services">Services</a></li>
+        <li><a href="#pricing">Pricing</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+
+    <!-- HERO -->
+    <header>
+      <div class="hero-tiles">
+        <div class="htile">🀇</div>
+        <div class="htile">🀙</div>
+        <div class="htile">🀄</div>
+        <div class="htile">🀅</div>
+        <div class="htile">🀃</div>
+        <div class="htile">🀋</div>
+        <div class="htile">🀂</div>
+        <div class="htile">🀘</div>
+      </div>
+      <div class="hero-content">
+        <div class="hero-kana">龍牌</div>
+        <div class="hero-title">BamBam Mahjong</div>
+        <div class="hero-sub">
+          Lessons · Tournaments · Sets &amp; Accessories
+        </div>
+        <div class="divider-gold"></div>
+        <a href="#services" class="btn-primary">Explore Our Offerings</a>
+      </div>
+    </header>
+
+    <!-- ABOUT -->
+    <section id="about">
+      <div>
+        <div class="section-label">關於我們</div>
+        <h2 class="section-title">A Living Tradition</h2>
+        <p class="section-body">
+          Dragon Tile Mahjong has been bringing the ancient art of mahjong to
+          players of all skill levels since 2010. Whether you're a curious
+          newcomer or a seasoned competitor, we offer an authentic, welcoming
+          experience rooted in the game's rich cultural heritage.
+        </p>
+        <p class="section-body" style="margin-top: 1rem">
+          We host weekly game nights, private lessons, and regional tournaments
+          — plus a carefully curated shop featuring hand-crafted tile sets,
+          bamboo racks, and accessories sourced directly from Guangdong.
+        </p>
+      </div>
+      <div class="about-tile-stack">
+        <div class="demo-tile red-tile">🀄</div>
+        <div class="demo-tile">🀇</div>
+        <div class="demo-tile red-tile">🀅</div>
+        <div class="demo-tile">🀙</div>
+        <div class="demo-tile">🀋</div>
+        <div class="demo-tile red-tile">🀃</div>
+        <div class="demo-tile">🀘</div>
+        <div class="demo-tile">🀂</div>
+        <div class="demo-tile red-tile">🀆</div>
+        <div class="demo-tile">🀌</div>
+        <div class="demo-tile">🀑</div>
+        <div class="demo-tile red-tile">🀀</div>
+      </div>
+    </section>
+
+    <!-- SERVICES -->
+    <section id="services">
+      <div class="section-label">服務</div>
+      <h2 class="section-title">What We Offer</h2>
+      <div class="services-grid">
+        <div class="service-card">
+          <div class="service-icon">🎓</div>
+          <h3>Private Lessons</h3>
+          <p>
+            One-on-one instruction tailored to your pace — from understanding
+            the tiles to mastering advanced strategy.
+          </p>
+        </div>
+        <div class="service-card">
+          <div class="service-icon">🏆</div>
+          <h3>Tournaments</h3>
+          <p>
+            Monthly and seasonal competitive events in Cantonese, Riichi, and
+            American styles. All skill levels welcome.
+          </p>
+        </div>
+        <div class="service-card">
+          <div class="service-icon">🌙</div>
+          <h3>Game Nights</h3>
+          <p>
+            Join our friendly weekly drop-in sessions. Meet fellow enthusiasts,
+            find your table, and play the evening away.
+          </p>
+        </div>
+        <div class="service-card">
+          <div class="service-icon">🀄</div>
+          <h3>Sets &amp; Accessories</h3>
+          <p>
+            Premium hand-crafted tile sets, bamboo racks, and carrying cases —
+            available in-store and online.
+          </p>
+        </div>
+        <div class="service-card">
+          <div class="service-icon">🎉</div>
+          <h3>Private Events</h3>
+          <p>
+            Host a mahjong party, corporate team-building event, or cultural
+            experience with our guided setup packages.
+          </p>
+        </div>
+        <div class="service-card">
+          <div class="service-icon">📚</div>
+          <h3>Strategy Workshops</h3>
+          <p>
+            Deep-dive sessions on tile reading, defensive play, and winning hand
+            construction for intermediate players.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- PRICING -->
+    <section id="pricing">
+      <div class="section-label">價格</div>
+      <h2 class="section-title">Membership Plans</h2>
+      <div class="pricing-grid">
+        <div class="price-card">
+          <h3>Casual</h3>
+          <div class="price-amount"><span>$</span>15</div>
+          <div class="price-per">per session</div>
+          <ul class="price-features">
+            <li>Drop-in Game Nights</li>
+            <li>Access to House Sets</li>
+            <li>Beginner Friendly</li>
+          </ul>
+          <a href="#contact" class="btn-primary" style="font-size: 0.78rem"
+            >Get Started</a
+          >
+        </div>
+        <div class="price-card featured">
+          <h3>Member</h3>
+          <div class="price-amount"><span>$</span>60</div>
+          <div class="price-per">per month</div>
+          <ul class="price-features">
+            <li>Unlimited Game Nights</li>
+            <li>1 Group Workshop / Month</li>
+            <li>10% Shop Discount</li>
+            <li>Tournament Entry Discount</li>
+          </ul>
+          <a href="#contact" class="btn-primary" style="font-size: 0.78rem"
+            >Join Now</a
+          >
+        </div>
+        <div class="price-card">
+          <h3>Master</h3>
+          <div class="price-amount"><span>$</span>120</div>
+          <div class="price-per">per month</div>
+          <ul class="price-features">
+            <li>Everything in Member</li>
+            <li>Monthly Private Lesson</li>
+            <li>20% Shop Discount</li>
+            <li>Free Tournament Entry</li>
+          </ul>
+          <a href="#contact" class="btn-primary" style="font-size: 0.78rem"
+            >Join Now</a
+          >
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact">
+      <div>
+        <div class="section-label">聯繫我們</div>
+        <h2 class="section-title">Get In Touch</h2>
+        <p class="section-body">
+          Questions about lessons, events, or orders? We'd love to hear from
+          you.
+        </p>
+        <div class="contact-info">
+          <p>
+            <strong>Address</strong><br />123 Jade Pavilion Lane, San Francisco,
+            CA 94108
+          </p>
+          <p><strong>Hours</strong><br />Tue – Sun · 3 pm – 11 pm</p>
+          <p><strong>Phone</strong><br />(415) 555-0198</p>
+          <p><strong>Email</strong><br />hello@dragontile.com</p>
+        </div>
+      </div>
+      <div>
+        <div class="contact-form">
+          <input type="text" placeholder="Your Name" />
+          <input type="email" placeholder="Email Address" />
+          <input
+            type="text"
+            placeholder="Subject (e.g. Private Lesson Inquiry)"
+          />
+          <textarea placeholder="Your message…"></textarea>
+          <a href="#" class="btn-primary" style="text-align: center"
+            >Send Message</a
+          >
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+      <div class="footer-logo">龍牌</div>
+      <p>© 2025 Dragon Tile Mahjong · All rights reserved</p>
+    </footer>
+  </body>
+</html>
